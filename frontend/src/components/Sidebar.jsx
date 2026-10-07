@@ -122,7 +122,9 @@ export default function Sidebar({ health, sources, ingesting, onIngest, onReinde
         </div>
         <div className="pipe-row">
           <span>Vector DB</span>
-          <b className="ok-text">{health?.vector_store || '—'}</b>
+          <b className="ok-text" title={health?.qdrant_host || health?.collection || ''}>
+            {health?.vector_store || '—'}
+          </b>
         </div>
         <div className="side-actions">
           <button className="btn btn-block" onClick={onIngest} disabled={ingesting}>

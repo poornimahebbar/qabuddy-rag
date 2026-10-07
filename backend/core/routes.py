@@ -43,13 +43,26 @@ class SearchPayload(BaseModel):
 
 @router.get("/health")
 async def operational_health_status():
+    qdrant_url = (settings.QDRANT_URL or "").strip()
+    if not qdrant_url:
+        vector_store = "Qdrant Local (embedded)"
+    elif "cloud.qdrant.io" in qdrant_url:
+        vector_store = "Qdrant Cloud"
+    else:
+        vector_store = "qdrant_server"
+    try:
+        host = qdrant_url.split("://", 1)[1].split("/", 1)[0] if "://" in qdrant_url else ""
+    except Exception:
+        host = ""
     return {
         "status": "healthy",
         "service": "QABuddy RAG API",
         "embedding_model": settings.EMBEDDING_MODEL,
         "llm_model": settings.GROQ_MODEL,
         "rerank_provider": "cohere" if settings.COHERE_API_KEY else "groq_llm_fallback",
-        "vector_store": "qdrant_server" if settings.QDRANT_URL else "qdrant_local",
+        "vector_store": vector_store,
+        "qdrant_host": host,
+        "collection": settings.COLLECTION_NAME,
     }
 
 
