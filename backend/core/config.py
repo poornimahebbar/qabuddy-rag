@@ -13,6 +13,25 @@ load_dotenv(ENV_FILE, override=True)
 IS_VERCEL = bool(os.environ.get("VERCEL"))
 
 
+# Canonical doc types. Legacy `playwright_*` values (indexed before the
+# Automation-Specs rename) keep matching through DOC_TYPE_ALIASES until
+# the next Full Reindex rewrites Qdrant cleanly.
+DOC_TYPES = ("jira_defect", "test_case", "automation_spec", "automation_page", "automation_module")
+DOC_TYPE_ALIASES = {
+    "playwright_spec": "automation_spec",
+    "playwright_page": "automation_page",
+    "playwright_module": "automation_module",
+}
+LEGACY_DOC_TYPES = tuple(DOC_TYPE_ALIASES)
+
+
+def canonical_doc_type(doc_type: str | None) -> str | None:
+    """Map a legacy doc_type to its canonical Automation name (None-safe)."""
+    if not doc_type or doc_type == "all":
+        return doc_type
+    return DOC_TYPE_ALIASES.get(doc_type, doc_type)
+
+
 class Settings:
     # --- LLM (Groq) ---
     GROQ_API_KEY: str = os.getenv("GROQ_API_KEY", "")

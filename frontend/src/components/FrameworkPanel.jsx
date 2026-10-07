@@ -48,7 +48,7 @@ export default function FrameworkPanel({ onIndexed }) {
         <input
           className="fw-input"
           type="url"
-          placeholder="https://github.com/org/playwright-framework.git"
+          placeholder="https://github.com/org/automation-framework.git"
           value={repoUrl}
           onChange={(e) => setRepoUrl(e.target.value)}
           disabled={busy}
@@ -87,7 +87,7 @@ export default function FrameworkPanel({ onIndexed }) {
         </ul>
       )}
       <div className="fw-hint muted">
-        Pulls any Playwright repo into the vector DB — then ask “is login already automated?”.
+        Pulls any automation repo (Playwright, Selenium, Cypress, …) into the vector DB — then ask “is login already automated?”.
       </div>
     </div>
   )

@@ -1,7 +1,11 @@
 const TYPE_META = {
   jira_defect: { label: 'Jira Defect', cls: 'tag-jira' },
   test_case: { label: 'Test Case', cls: 'tag-tc' },
-  playwright_spec: { label: 'Playwright Spec', cls: 'tag-pw' },
+  automation_spec: { label: 'Automation Spec', cls: 'tag-pw' },
+  automation_page: { label: 'Page Object', cls: 'tag-pw' },
+  automation_module: { label: 'Module', cls: 'tag-pw' },
+  // Legacy doc_types (pre-rename index) render under the new names.
+  playwright_spec: { label: 'Automation Spec', cls: 'tag-pw' },
   playwright_page: { label: 'Page Object', cls: 'tag-pw' },
   playwright_module: { label: 'Module', cls: 'tag-pw' },
 }

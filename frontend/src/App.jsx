@@ -8,9 +8,9 @@ const FILTERS = [
   { key: 'all', label: 'All Sources' },
   { key: 'jira_defect', label: 'Jira Defects' },
   { key: 'test_case', label: 'Test Cases' },
-  { key: 'playwright_spec', label: 'Playwright Specs' },
-  { key: 'playwright_page', label: 'Page Objects' },
-  { key: 'playwright_module', label: 'Modules' },
+  { key: 'automation_spec', label: 'Automation Specs' },
+  { key: 'automation_page', label: 'Page Objects' },
+  { key: 'automation_module', label: 'Modules' },
 ]
 
 const SAMPLE_QUERIES = [
@@ -99,7 +99,7 @@ export default function App() {
         <header className="hero">
           <h1>QABuddy<span className="accent">.ai</span></h1>
           <p className="tagline">
-            Grounded QA intelligence over your Jira defects, test cases and Playwright framework —
+            Grounded QA intelligence over your Jira defects, test cases and automation frameworks —
             with vector search, neural reranking and zero-hallucination answers.
           </p>
         </header>

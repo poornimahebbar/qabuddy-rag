@@ -83,7 +83,8 @@ def _spec_location(spec: Path, tests_dir: Path) -> str:
 
 
 def parse_playwright_specs(tests_dir: Path) -> list[dict]:
-    """Playwright .spec.ts files -> doc_type 'playwright_spec' (one chunk per test())."""
+    """Playwright .spec.ts files -> doc_type 'automation_spec' (one chunk per test()).
+    Name kept for backward compatibility; emits the generic Automation type."""
     chunks = []
     if not tests_dir.exists():
         return chunks
@@ -111,7 +112,7 @@ def parse_playwright_specs(tests_dir: Path) -> list[dict]:
                 ("Detected interactions: " + "; ".join(steps)) if steps else "",
             ]))
             chunks.append({
-                "doc_type": "playwright_spec",
+                "doc_type": "automation_spec",
                 "record_id": f"{spec.stem}::{test_title[:60]}",
                 "title": f"{describe} > {test_title}" if describe else test_title,
                 "priority": "",
@@ -126,7 +127,8 @@ def parse_playwright_specs(tests_dir: Path) -> list[dict]:
 
 
 def parse_playwright_components(comp_dir: Path, doc_type: str, label: str) -> list[dict]:
-    """Playwright page-object / module .ts files -> doc_type 'playwright_page'/'playwright_module'."""
+    """Page-object / module .ts files -> 'automation_page'/'automation_module'.
+    Name kept for backward compatibility; emits the generic Automation type."""
     chunks = []
     if not comp_dir.exists():
         return chunks
@@ -245,10 +247,10 @@ def parse_framework_dir(framework_dir: Path, framework_name: str) -> list[dict]:
     pages_dir = framework_dir / "src" / "pages"
     modules_dir = framework_dir / "src" / "modules"
     if pages_dir.exists():
-        raw = parse_playwright_components(pages_dir, "playwright_page", "Page Object")
+        raw = parse_playwright_components(pages_dir, "automation_page", "Page Object")
         chunks.extend(_reprefix_framework_chunk(c, framework_dir, framework_name) for c in raw)
     if modules_dir.exists():
-        raw = parse_playwright_components(modules_dir, "playwright_module", "Module")
+        raw = parse_playwright_components(modules_dir, "automation_module", "Module")
         chunks.extend(_reprefix_framework_chunk(c, framework_dir, framework_name) for c in raw)
     if not pages_dir.exists() and not modules_dir.exists():
         for ts in sorted(framework_dir.rglob("*.ts")):
@@ -256,7 +258,7 @@ def parse_framework_dir(framework_dir: Path, framework_name: str) -> list[dict]:
             if ".git/" in posix or "node_modules" in ts.parts or ts.name == "index.ts":
                 continue
             if "page" in ts.name.lower() or "module" in ts.name.lower():
-                extra = parse_playwright_components(ts.parent, "playwright_page", "Page Object")
+                extra = parse_playwright_components(ts.parent, "automation_page", "Page Object")
                 chunks.extend(
                     _reprefix_framework_chunk(c, framework_dir, framework_name)
                     for c in extra if ts.name in c.get("location", "")
@@ -299,7 +301,7 @@ def _parse_spec_file(spec: Path, framework_dir: Path, framework_name: str) -> li
     except OSError:
         return []
     return [{
-        "doc_type": "playwright_spec",
+        "doc_type": "automation_spec",
         "record_id": f"{spec.stem}::file",
         "title": f"{framework_name} > {spec.name}",
         "priority": "",
@@ -322,19 +324,19 @@ def file_index_status() -> dict:
         }
     """
     local = {
-        "playwright_specs": 0,
-        "playwright_pages": 0,
-        "playwright_modules": 0,
+        "automation_specs": 0,
+        "automation_pages": 0,
+        "automation_modules": 0,
         "uploaded_test_cases": 0,
         "uploaded_defects": 0,
         "frameworks": [],
     }
     if settings.PLAYWRIGHT_TESTS_DIR.exists():
-        local["playwright_specs"] = len(list(settings.PLAYWRIGHT_TESTS_DIR.rglob("*.spec.ts")))
+        local["automation_specs"] = len(list(settings.PLAYWRIGHT_TESTS_DIR.rglob("*.spec.ts")))
     if settings.PLAYWRIGHT_PAGES_DIR.exists():
-        local["playwright_pages"] = len(list(settings.PLAYWRIGHT_PAGES_DIR.rglob("*.ts")))
+        local["automation_pages"] = len(list(settings.PLAYWRIGHT_PAGES_DIR.rglob("*.ts")))
     if settings.PLAYWRIGHT_MODULES_DIR.exists():
-        local["playwright_modules"] = len(list(settings.PLAYWRIGHT_MODULES_DIR.rglob("*.ts")))
+        local["automation_modules"] = len(list(settings.PLAYWRIGHT_MODULES_DIR.rglob("*.ts")))
     for folder, key in (("test_case", "uploaded_test_cases"), ("defect", "uploaded_defects")):
         cat_dir = settings.UPLOAD_DIR / folder
         if cat_dir.exists():
@@ -369,8 +371,8 @@ def collect_all_chunks() -> list[dict]:
     if suite.exists():
         chunks.extend(parse_suite_csv(suite))
     chunks.extend(parse_playwright_specs(settings.PLAYWRIGHT_TESTS_DIR))
-    chunks.extend(parse_playwright_components(settings.PLAYWRIGHT_PAGES_DIR, "playwright_page", "Page Object"))
-    chunks.extend(parse_playwright_components(settings.PLAYWRIGHT_MODULES_DIR, "playwright_module", "Module"))
+    chunks.extend(parse_playwright_components(settings.PLAYWRIGHT_PAGES_DIR, "automation_page", "Page Object"))
+    chunks.extend(parse_playwright_components(settings.PLAYWRIGHT_MODULES_DIR, "automation_module", "Module"))
     # User-uploaded CSVs (persists across Full Reindex)
     for folder, doc_type in (("test_case", "test_case"), ("defect", "jira_defect")):
         cat_dir = settings.UPLOAD_DIR / folder

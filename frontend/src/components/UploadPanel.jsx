@@ -5,7 +5,7 @@ const ZONES = [
   {
     key: 'test_case',
     label: 'Upload Test Automation Cases',
-    hint: 'Playwright suites, keyword-driven tests (.csv)',
+    hint: 'Automation suites, keyword-driven tests (.csv)',
     icon: '🧪',
   },
   {

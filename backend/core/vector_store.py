@@ -6,13 +6,14 @@ from qdrant_client.models import (
     Distance,
     FieldCondition,
     Filter,
+    MatchAny,
     MatchValue,
     PayloadSchemaType,
     PointStruct,
     VectorParams,
 )
 
-from .config import settings
+from .config import LEGACY_DOC_TYPES, canonical_doc_type, settings
 
 _client: QdrantClient | None = None
 
@@ -86,12 +87,31 @@ def upsert_chunks(chunks: list[dict], vectors: list[list[float]]) -> int:
     return len(points)
 
 
+def _match_values(doc_type: str) -> list[str]:
+    """All stored values satisfying a requested doc_type (legacy + canonical)."""
+    canon = canonical_doc_type(doc_type)
+    values = {doc_type, canon}
+    for legacy, mapped in (("playwright_spec", "automation_spec"),
+                           ("playwright_page", "automation_page"),
+                           ("playwright_module", "automation_module")):
+        if doc_type in (legacy, mapped):
+            values.update((legacy, mapped))
+    return sorted(values)
+
+
+def _doc_type_filter(doc_type: str) -> Filter:
+    values = _match_values(doc_type)
+    if len(values) == 1:
+        return Filter(must=[FieldCondition(key="doc_type", match=MatchValue(value=values[0]))])
+    return Filter(must=[FieldCondition(key="doc_type", match=MatchAny(any=values))])
+
+
 def search_vectors(query_vector: list[float], limit: int, doc_type: str | None = None) -> list[dict]:
     client = get_client()
     ensure_collection()
     query_filter = None
     if doc_type and doc_type != "all":
-        query_filter = Filter(must=[FieldCondition(key="doc_type", match=MatchValue(value=doc_type))])
+        query_filter = _doc_type_filter(doc_type)
     res = client.query_points(
         collection_name=settings.COLLECTION_NAME,
         query=query_vector,
@@ -113,16 +133,20 @@ def collection_counts() -> dict:
     out = {"total": 0, "by_type": {}}
     res = client.count(collection_name=settings.COLLECTION_NAME, exact=True)
     out["total"] = res.count
-    for doc_type in ("jira_defect", "test_case", "playwright_spec", "playwright_page", "playwright_module"):
+    for doc_type in ("jira_defect", "test_case", "automation_spec", "automation_page", "automation_module"):
         try:
             r = client.count(
                 collection_name=settings.COLLECTION_NAME,
                 exact=True,
-                count_filter=Filter(must=[FieldCondition(key="doc_type", match=MatchValue(value=doc_type))]),
+                count_filter=_doc_type_filter(doc_type),
             )
             out["by_type"][doc_type] = r.count
         except Exception:
             out["by_type"][doc_type] = 0
+    # Mirror legacy keys so older UIs keep rendering during the transition.
+    for legacy in LEGACY_DOC_TYPES:
+        canon = canonical_doc_type(legacy)
+        out["by_type"].setdefault(legacy, out["by_type"].get(canon, 0))
     return out
 
 
@@ -131,7 +155,7 @@ def scroll_chunks(doc_type: str | None = None, limit: int = 50) -> list[dict]:
     ensure_collection()
     query_filter = None
     if doc_type and doc_type != "all":
-        query_filter = Filter(must=[FieldCondition(key="doc_type", match=MatchValue(value=doc_type))])
+        query_filter = _doc_type_filter(doc_type)
     points, _ = client.scroll(
         collection_name=settings.COLLECTION_NAME,
         limit=limit,

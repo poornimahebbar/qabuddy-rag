@@ -10,9 +10,13 @@ from .vector_store import search_vectors
 DOC_TYPE_LABELS = {
     "jira_defect": "Jira Defect",
     "test_case": "Test Case",
-    "playwright_spec": "Playwright Spec",
-    "playwright_page": "Playwright Page Object",
-    "playwright_module": "Playwright Module",
+    "automation_spec": "Automation Spec",
+    "automation_page": "Automation Page Object",
+    "automation_module": "Automation Module",
+    # Legacy values (pre-rename index) render under the new names.
+    "playwright_spec": "Automation Spec",
+    "playwright_page": "Automation Page Object",
+    "playwright_module": "Automation Module",
 }
 
 

@@ -37,7 +37,7 @@ _PROD_BLOCKED_MSG = (
 
 class SearchPayload(BaseModel):
     query: str
-    doc_type: str | None = Field(default=None, description="jira_defect | test_case | playwright_spec | ...")
+    doc_type: str | None = Field(default=None, description="jira_defect | test_case | automation_spec | ...")
     top_k: int | None = Field(default=None, ge=1, le=20)
 
 
@@ -153,8 +153,8 @@ async def pull_framework(payload: FrameworkPullPayload):
 
     Body: {"repo_url": "https://github.com/org/framework.git", "branch": "main" (optional)}.
 
-    Each spec test() becomes a `playwright_spec` chunk; page objects / modules
-    become `playwright_page` / `playwright_module` chunks — all namespaced as
+    Each spec test() becomes an `automation_spec` chunk; page objects / modules
+    become `automation_page` / `automation_module` chunks — all namespaced as
     `frameworks/<name>/...` so re-pulls overwrite the same points and anyone can
     search "is login already automated?" style questions. CSV test-case and defect
     zones are untouched.

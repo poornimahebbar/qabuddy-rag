@@ -70,6 +70,10 @@ body {
 .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
 .dot-jira_defect { background: var(--jira); }
 .dot-test_case { background: var(--tc); }
+.dot-automation_spec { background: var(--pw); }
+.dot-automation_page { background: #7dd3fc; }
+.dot-automation_module { background: #34d399; }
+/* Legacy keys (pre-rename index) keep their colours during the transition. */
 .dot-playwright_spec { background: var(--pw); }
 .dot-playwright_page { background: #7dd3fc; }
 .dot-playwright_module { background: #34d399; }

@@ -6,9 +6,9 @@ import { getFrameworkCheck } from '../api.js'
 const TYPE_LABELS = {
   jira_defect: 'Jira Defect',
   test_case: 'Test Case',
-  playwright_spec: 'Playwright Spec',
-  playwright_page: 'Page Object',
-  playwright_module: 'Module',
+  automation_spec: 'Automation Spec',
+  automation_page: 'Page Object',
+  automation_module: 'Module',
 }
 
 export default function Sidebar({ health, sources, ingesting, onIngest, onReindex, onUploadSuccess }) {
@@ -29,14 +29,21 @@ export default function Sidebar({ health, sources, ingesting, onIngest, onReinde
   const db = check?.database || {}
   const indexed = db.indexed ?? total
   const localTotal =
-    (local.playwright_specs || 0) +
-    (local.playwright_pages || 0) +
-    (local.playwright_modules || 0) +
+    (local.automation_specs ?? local.playwright_specs ?? 0) +
+    (local.automation_pages ?? local.playwright_pages ?? 0) +
+    (local.automation_modules ?? local.playwright_modules ?? 0) +
     (local.uploaded_test_cases || 0) +
     (local.uploaded_defects || 0)
   const denom = Math.max(localTotal * 3, indexed, 1)
   const progress = Math.min(100, Math.round((indexed / denom) * 100))
   const byTypeDb = db.by_type || {}
+  // Transition helper: pre-rename Cloud indexes report playwright_* keys.
+  const LEGACY_FALLBACK = {
+    automation_spec: 'playwright_spec',
+    automation_page: 'playwright_page',
+    automation_module: 'playwright_module',
+  }
+  const fallbackCount = (key) => byType[LEGACY_FALLBACK[key]] ?? 0
 
   return (
     <aside className="sidebar">
@@ -51,7 +58,7 @@ export default function Sidebar({ health, sources, ingesting, onIngest, onReinde
             <li key={key}>
               <span className={`dot dot-${key}`} />
               <span className="src-label">{label}</span>
-              <span className="src-count">{byType[key] ?? 0}</span>
+              <span className="src-count">{byType[key] ?? fallbackCount(key)}</span>
             </li>
           ))}
         </ul>
@@ -77,7 +84,7 @@ export default function Sidebar({ health, sources, ingesting, onIngest, onReinde
             <div>
               <span className="already-index-label">On disk</span>
               <div className="already-index-count">
-                {local.playwright_specs ?? '-'} specs / {local.playwright_pages ?? '-'} pages / {local.playwright_modules ?? '-'} modules
+                {(local.automation_specs ?? local.playwright_specs ?? '-')} specs / {(local.automation_pages ?? local.playwright_pages ?? '-')} pages / {(local.automation_modules ?? local.playwright_modules ?? '-')} modules
                 <br />
                 {local.uploaded_test_cases ?? '-'} test-case files / {local.uploaded_defects ?? '-'} defect files
               </div>
