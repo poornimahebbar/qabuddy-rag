@@ -1,0 +1,21 @@
+# Secrets and local state must never enter the deployment bundle
+.env
+.venv/
+storage/
+qabuddy.db
+*.log
+.vercel/
+
+# Local-only data and heavy dependencies (rebuilt/seeded at deploy time)
+data/
+Templates/
+Advance-Playwright-Framework/
+frontend/node_modules/
+frontend/dist/
+node_modules/
+**/node_modules/
+
+# Python junk
+__pycache__/
+**/__pycache__/
+*.pyc

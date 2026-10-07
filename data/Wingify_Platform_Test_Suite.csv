@@ -1,0 +1,101 @@
+TC Number,Priority,Type,Description
+TC-001,High,Performance,Verify asynchronous SmartCode loads without blocking the main document parsing.
+TC-002,High,UI / Functional,"Verify SmartCode Debugger detects if the tag is missing, present, or misplaced."
+TC-003,Medium,Functional,"Verify snippet times out gracefully if CDN faces high latency, serving Control."
+TC-004,Medium,Compatibility,Verify SmartCode behavior when JavaScript is fully disabled in the browser.
+TC-005,High,Functional / Cookie,Verify that the Wingify preview cookies are successfully written to the browser domain.
+TC-006,Medium,Integration,Verify SmartCode does not throw console errors when mixed with Google Analytics.
+TC-007,High,Functional,Verify cross-domain tracking accurately preserves visitor identity across linked domains.
+TC-008,High,Security / DB,Verify data isolation across different projects inside the same corporate account.
+TC-009,Medium,Functional,Verify browser extensions blocking third-party tracking defaults site safely to Control.
+TC-010,High,API / Sync,Verify dashboard configuration updates propagate to deployed SmartCode cache within standard window.
+TC-011,High,UI / Functional,Verify no-code Visual Editor loads external HTTP/HTTPS webpage in iframe safely.
+TC-012,High,Functional,Verify modifying text inside Visual Editor dynamically generates correct DOM mutation logic.
+TC-013,High,UI / Functional,"Verify modifying element's CSS properties (color, visibility) applies correctly in editor."
+TC-014,High,Functional,Verify custom HTML/JS blocks injected via Code Editor render correctly upon execution.
+TC-015,Medium,UI / Functional,Verify drag-and-drop layout rearrangement updates visual structure without breaking adjacent DOM.
+TC-016,Medium,UI,Verify 'Undo' and 'Redo' history functions operate properly within editing canvas.
+TC-017,Medium,Functional,Verify modifications to elements within complex nested dropdowns or shadow DOM map cleanly.
+TC-018,High,Functional,Verify dynamic single-page application (SPA) paths load properly within Visual Editor.
+TC-019,Low,UI / AI,Verify Wingz AI Copilot ('Remix Your Variation') generates contextual text alternatives on prompt.
+TC-020,Medium,UI / Functional,Verify image swaps within Visual Editor replace source URLs without distorting aspect ratios.
+TC-021,Medium,UI / Functional,"Verify creating, updating, and archiving hypotheses within Kanban Planning Board."
+TC-022,Medium,Functional,Verify linking a pre-configured hypothesis to a brand-new A/B testing campaign.
+TC-023,High,Functional / DB,Verify campaign state transitions execute seamlessly: Draft -> Scheduled -> Running -> Paused -> Terminated.
+TC-024,High,Functional,Verify modifying traffic distribution weights recalculates real-time delivery splits accurately.
+TC-025,High,UI / Validation,Verify user cannot launch a campaign without configuring at least one primary tracking metric.
+TC-026,Medium,Functional / DB,"Verify cloning an existing campaign transfers all goals, variations, and targeting filters accurately."
+TC-027,High,Functional,Verify archiving a campaign halts all live bucket tracking and stops injecting variants immediately.
+TC-028,High,Functional / Logic,Verify Mutually Exclusive Groups (MEG) block users exposed to Campaign A from entering Campaign B.
+TC-029,Medium,Validation,Verify configuration limits on the maximum allowed variations within a single multivariate campaign.
+TC-030,Low,UI,Verify metadata tags or campaign descriptions filter effectively within the campaign list view.
+TC-031,High,Functional,Verify a classic A/B Test splits incoming traffic equally between Control and one Variation.
+TC-032,High,Functional / Network,Verify a Split URL Test redirects assigned traffic distribution cleanly to variant URL.
+TC-033,High,Functional,Verify query parameters from original URL are forwarded to new URL during Split URL redirection.
+TC-034,Medium,Functional,Verify a Multivariate Test (MVT) correctly calculates all mathematically possible element combinations.
+TC-035,High,Functional / Cookie,"Verify Multi-Page A/B Test retains consistent visitor variations across sequential pages (e.g., Checkout)."
+TC-036,High,Integration,Verify theme variations inside Shopify integration execute accurately during Theme Testing.
+TC-037,High,Functional,Verify changing high-impact elements records conversion data appropriately per variation.
+TC-038,Medium,Compatibility / UI,"Verify cross-browser previews render perfectly across Chrome, Safari, Firefox, and Edge."
+TC-039,Medium,Functional,Verify global template variations render correctly on all sub-directories.
+TC-040,Medium,Security / Cookie,Verify tracking cookies persist accurately when user switches from HTTP to HTTPS sections.
+TC-041,High,Functional / UI,Verify Device-Specific Campaigns isolate mobile viewports cleanly from desktop users.
+TC-042,High,Functional / Network,Verify geo-targeting capabilities filter users based on incoming IP down to country and city.
+TC-043,Medium,Functional,Verify traffic behavior targeting works perfectly for First-time Visitors vs Returning Visitors.
+TC-044,Medium,Functional,"Verify targeting logic based on explicit query parameters (e.g., UTM parameters)."
+TC-045,Medium,UI / Functional,Verify behavior targeting triggers based on scroll depth reaching specified percentage.
+TC-046,High,Functional,Verify targeting filters validate cookie values or JavaScript custom variables on the host site.
+TC-047,Medium,Security / Network,Verify target exclusion filters block traffic coming from specific system corporate IP addresses.
+TC-048,High,Functional / Logic,Verify combining targeting parameters via nested AND / OR logic blocks/grants entry correctly.
+TC-049,Medium,Compatibility,Verify user-agent targeting precisely isolates specific operating systems (iOS vs Android).
+TC-050,High,API / Sync,Verify live changes to audience segment properties apply immediately to net-new site visitors.
+TC-051,High,Functional / DB,Verify 'Page Visit Goal' triggers and logs conversion data point when hitting target URL.
+TC-052,High,UI / Functional,Verify 'Click Element Goal' tracks accurately when users select specific DOM classes or IDs.
+TC-053,High,Functional / DB,"Verify 'Form Submission Goal' tracks only upon successful API response, not just button click."
+TC-054,High,DB / Functional,Verify revenue tracking logic by passing dynamic order totals and currencies through snippet.
+TC-055,Medium,Functional / DB,Verify multiple goal conversions achieved by a single visitor session increment all metrics.
+TC-056,High,API / Integration,Verify custom event tracking fired manually via programmatic JS APIs (vwo.push).
+TC-057,Medium,Functional / Logic,Verify immediate consecutive clicks on same element deduplicate per campaign session rules.
+TC-058,Medium,Functional / Network,Verify outbound link clicks to external domains record as conversion before page unload completes.
+TC-059,Medium,UI / Functional,Verify engagement goals count actions like video plays or internal search form usage.
+TC-060,Medium,DB / Functional,Verify goal data updates cleanly if a goal is added or edited mid-campaign.
+TC-061,High,Performance / SDK,Verify server-side feature flags toggle instantly via SDK without front-end flickering.
+TC-062,High,Functional,Verify Feature Rollouts scale percentages sequentially (10% -> 25% -> 100%) cleanly.
+TC-063,High,Performance / SDK,Verify server-side feature flags fallback safely to hardcoded default values if SDK fails.
+TC-064,High,Functional / SDK,Verify executing an A/B test directly inside backend code via Feature Experimentation SDK.
+TC-065,High,API / Sync,Verify updating remote feature config variables reflects across server instances instantly.
+TC-066,High,Functional / Logic,Verify user sticky bucketing remains consistent between backend SDK and front-end tags.
+TC-067,High,Automation / DB,Verify automated rollback trigger kills a feature flag if guardrail metric is broken.
+TC-068,Medium,Compatibility / SDK,"Verify cross-platform SDK tracking uniformity (Node.js, Python, Java, PHP implementations)."
+TC-069,Medium,Functional / SDK,Verify passing custom user context variables into server-side evaluation matches rules.
+TC-070,High,Performance / DB,Verify server-side tracking events queue properly under extreme traffic loads before dispatching.
+TC-071,High,Mobile / SDK,Verify iOS SDK initializes correctly inside app delegate using valid application credentials.
+TC-072,High,Mobile / SDK,Verify Android SDK initializes inside the main application instance.
+TC-073,High,Mobile / UI,Verify mobile app experiment variation delivers layouts correctly across sizes and orientations.
+TC-074,High,Mobile / Cookie,Verify mobile app sticky bucketing persists if app closes or network switches (Cellular to Wi-Fi).
+TC-075,Medium,Mobile / UI,Verify mobile push notifications or modal variations render perfectly across various OS versions.
+TC-076,High,Mobile / DB,Verify offline event tracking queues data locally and syncs cleanly upon network reconnect.
+TC-077,High,Compliance / SDK,Verify app store compliance by testing that SDK utilizes no forbidden or private APIs.
+TC-078,Medium,Mobile / UI,"Verify testing user onboarding variations, paywall variants, and subscription flows natively."
+TC-079,High,Mobile / Sync,Verify mobile app feature flags roll back cleanly via remote dashboard without store release.
+TC-080,Medium,Performance,Verify SDK does not create measurable battery drain or execution blocks on main app thread.
+TC-081,High,UI / Functional,Verify Heatmaps accurately map cursor density over dynamic variations.
+TC-082,High,UI / Functional,Verify Clickmaps track precise click coordinates over responsive design layout shifts.
+TC-083,High,UI / Performance,"Verify Session Recordings capture user scroll pathways, hovers, and DOM manipulations."
+TC-084,High,Security / Privacy,Verify PII input fields mask automatically inside session recordings to preserve privacy.
+TC-085,Medium,UI / Functional,Verify Journey Analytics trace multi-page conversion paths and drops correctly.
+TC-086,Medium,UI / Functional,Verify User Feedback slide-in micro-surveys trigger properly based on exit-intent behaviors.
+TC-087,Medium,UI / DB,Verify submitting micro-survey stores responses securely and reflects data instantly in dashboard.
+TC-088,Medium,UI / DB,Verify custom form analytics break down field abandonment metrics and completion times.
+TC-089,High,Integration,Verify session recordings map cleanly against targeted campaign variations for debugging.
+TC-090,Medium,AI / UI,Verify accuracy of automated insight alerts generated by Wingz AI recognizing systemic friction.
+TC-091,High,DB / Reporting,Verify reporting dashboards display correct conversion rates and statistical significance (p-values).
+TC-092,Medium,UI / Export,Verify exporting comprehensive report data tables into standard CSV or Excel files.
+TC-093,High,Performance,Verify execution of Page Flicker Prevention timeout checks to default to Control if lagging.
+TC-094,High,Security / RBAC,Verify security parameters across User Management systems (Admin vs Editor vs Viewer).
+TC-095,High,Security,Verify Two-Factor Authentication (2FA) and Single Sign-On (SSO) login capabilities authorize users.
+TC-096,High,Compliance / DB,"Verify platform compliance with GDPR/CCPA data privacy mandates (retention, right-to-forget)."
+TC-097,High,Integration,"Verify third-party analytics dashboard integrations function correctly (Segment, Mixpanel)."
+TC-098,High,API / Security,Verify API access controls return exact payload responses when query tokens invoke external metrics.
+TC-099,High,Performance / Load,Verify platform stability during extensive load tests simulating thousands of concurrent conversion payloads.
+TC-100,High,Security / DB,"Verify full transparency via Audit Logs, confirming every configuration change captures user/timestamp."

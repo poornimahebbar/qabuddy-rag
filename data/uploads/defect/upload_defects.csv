@@ -1,0 +1,3 @@
+﻿Issue key,Summary,Priority,Status,Description
+DEF-901,Login button unresponsive on Safari,Critical,Open,Login button does not respond on Safari 17
+DEF-902,Dashboard chart shows stale data,High,In Progress,Charts use cached values after refresh

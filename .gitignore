@@ -1,0 +1,41 @@
+﻿# OS / editor
+.DS_Store
+.idea/
+.vscode/
+
+# Secrets — never commit
+.env
+.env.local
+.env.*.local
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# Node / frontend build
+frontend/node_modules/
+frontend/dist/
+
+# SQLite / state
+qabuddy.db
+qabuddy.db-journal
+storage/
+data/uploads/*.tmp
+
+# Logs
+*.log
+*.log.*.gz
+
+# Vercel
+.vercel/
+
+# Playwright framework artifacts
+Advance-Playwright-Framework/test-results/
+Advance-Playwright-Framework/playwright-report/
+Advance-Playwright-Framework/.cache/
+Advance-Playwright-Framework/node_modules/

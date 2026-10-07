@@ -1,0 +1,3 @@
+﻿Test Case ID,Summary,Priority,Test Steps,Expected Result
+AUT-TC-001,Verify CSV upload pipeline works,High,Open app; click upload; select csv,Upload succeeds
+AUT-TC-002,Verify retry on network timeout,Medium,Simulate timeout; retry request,Retry succeeds
