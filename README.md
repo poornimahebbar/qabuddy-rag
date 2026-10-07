@@ -74,7 +74,7 @@ React (Vite, CDN) <-> Vercel Function (FastAPI) <-> Qdrant Cloud
 |---|---|
 | `GET /` | React SPA (served via `backend/main.py`) |
 | `GET /api/health` | Service + env check (embedding/LLM/rerank model names, vector-store mode) |
-| `GET /api/sources` | Indexed collections + metadata |
+| Latest commit `c045408` contains the full app + Vercel config, README template, and Qdrant Cloud setup
 | `POST /api/search` | Embed query -> retrieve -> rerank -> answered with citations |
 | `GET /api/upload` | Upload zones for CSVs (invoked from the UI) |
 
