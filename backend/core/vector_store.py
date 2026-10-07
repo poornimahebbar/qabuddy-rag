@@ -2,7 +2,15 @@
 import uuid
 
 from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, FieldCondition, Filter, MatchValue, PointStruct, VectorParams
+from qdrant_client.models import (
+    Distance,
+    FieldCondition,
+    Filter,
+    MatchValue,
+    PayloadSchemaType,
+    PointStruct,
+    VectorParams,
+)
 
 from .config import settings
 
@@ -13,7 +21,7 @@ def get_client() -> QdrantClient:
     global _client
     if _client is None:
         if settings.QDRANT_URL:
-            kwargs: dict = {"url": settings.QDRANT_URL}
+            kwargs: dict = {"url": settings.QDRANT_URL, "timeout": 120}
             if settings.QDRANT_API_KEY:
                 kwargs["api_key"] = settings.QDRANT_API_KEY
             _client = QdrantClient(**kwargs)
@@ -29,6 +37,16 @@ def ensure_collection() -> None:
             collection_name=settings.COLLECTION_NAME,
             vectors_config=VectorParams(size=settings.EMBEDDING_DIM, distance=Distance.COSINE),
         )
+    # Keyword indexes: Qdrant Cloud requires them for filtered count/search.
+    for field in ("doc_type", "source_file"):
+        try:
+            client.create_payload_index(
+                collection_name=settings.COLLECTION_NAME,
+                field_name=field,
+                field_schema=PayloadSchemaType.KEYWORD,
+            )
+        except Exception:
+            pass  # already indexed
 
 
 def point_id(record_id: str, source_file: str, row: int) -> str:
@@ -57,7 +75,14 @@ def upsert_chunks(chunks: list[dict], vectors: list[list[float]]) -> int:
         )
         for c, vec in zip(chunks, vectors)
     ]
-    client.upsert(collection_name=settings.COLLECTION_NAME, points=points, wait=True)
+    # Batch upserts: free-tier Cloud clusters time out on one giant request.
+    batch_size = 64
+    for start in range(0, len(points), batch_size):
+        client.upsert(
+            collection_name=settings.COLLECTION_NAME,
+            points=points[start:start + batch_size],
+            wait=True,
+        )
     return len(points)
 
 
