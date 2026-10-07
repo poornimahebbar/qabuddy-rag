@@ -1,11 +1,11 @@
 ﻿<h1 align="center">QABuddy — RAG QA Assistant</h1>
 <p align="center">
-  <b>Find QA defects, test cases & Playwright specs with AI-powered search</b>
+  <b>Find QA defects, test cases &amp; Playwright specs with AI-powered search</b>
   <br/>
-  <img src="https://img.shields.io/badge/frontend-React%20%2F%20Vite-646cff?logo=react&logoColor=white" />
-  <img src="https://img.shields.io/badge/backend-FastAPI-009688?logo=python&logoColor=white" />
-  <img src="https://img.shields.io/badge/vector%20DB-Qdrant%20Cloud-ffd23f?logo=qdrant&logoColor=black" />
-  <img src="https://img.shields.io/badge/deploy-Vercel-000000?logo=vercel&logoColor=white" />
+  <img src="https://img.shields.io/badge/frontend-React%20%2F%20Vite-646cff?logo=react&amp;logoColor=white" />
+  <img src="https://img.shields.io/badge/backend-FastAPI-009688?logo=python&amp;logoColor=white" />
+  <img src="https://img.shields.io/badge/vector%20DB-Qdrant%20Cloud-ffd23f?logo=qdrant&amp;logoColor=black" />
+  <img src="https://img.shields.io/badge/deploy-Vercel-000000?logo=vercel&amp;logoColor=white" />
 </p>
 
 ---
@@ -31,9 +31,11 @@ QABuddy is a **Retrieval-Augmented Generation (RAG)** application for QA enginee
 ### 2. Backend
 ```bash
 cd backend
-python -m venv .venv && .venv\Scripts\activate
+python -m venv .venv
+.venv\\Scripts\\activate
 pip install -r requirements.txt
-cp .env.example .env   # fill in GROQ_API_KEY, GEMINI_API_KEY, QDRANT_URL, QDRANT_API_KEY (optional)
+cp .env.example .env
+# fill in GROQ_API_KEY, GEMINI_API_KEY, QDRANT_URL, QDRANT_API_KEY (optional)
 uvicorn main:app --reload
 ```
 
@@ -46,9 +48,9 @@ npm run dev
 
 ### 4. Ingest your data
 - **Local**: use the interactive ingest script once:
-  ```bash
-  python ingest_run.py
-  ```
+```bash
+python ingest_run.py
+```
 - **Production (Vercel)**: use the **CSV upload zones** in the sidebar — the backend parses, validates, embeds and upserts the file, returning citations.
 
 ---
@@ -56,16 +58,16 @@ npm run dev
 ## 🏗️ Architecture
 
 ```
-React (Vite, CDN) ←→ Vercel Function (FastAPI) ←→ Qdrant Cloud
-                            │
-              ┌─────────────┴─────────────┐
-              ▼                         ▼
-        CSV parse/validation          Gemini embedding
-        (category whitelist, size,    + Groq rerank
-         extension)                    │
-              ▼                         ▼
-        data/uploads/              Vector index
-                                   (per-source collections)
+React (Vite, CDN) <-> Vercel Function (FastAPI) <-> Qdrant Cloud
+                            |
+              +-------------+-------------+
+              v                     v
+        CSV parse/validation    Gemini embedding
+        (category whitelist, size,
+         extension) + Groq rerank
+              v                     v
+        data/uploads/        Vector index
+                               (per-source collections)
 ```
 
 | Route | Purpose |
@@ -73,7 +75,7 @@ React (Vite, CDN) ←→ Vercel Function (FastAPI) ←→ Qdrant Cloud
 | `GET /` | React SPA (served via `backend/main.py`) |
 | `GET /api/health` | Service + env check (embedding/LLM/rerank model names, vector-store mode) |
 | `GET /api/sources` | Indexed collections + metadata |
-| `POST /api/search` | Embed query → retrieve → rerank → answered with citations |
+| `POST /api/search` | Embed query -> retrieve -> rerank -> answered with citations |
 | `GET /api/upload` | Upload zones for CSVs (invoked from the UI) |
 
 **Video demo**: https://youtu.be/WqEg1nB7pEw
@@ -83,15 +85,15 @@ React (Vite, CDN) ←→ Vercel Function (FastAPI) ←→ Qdrant Cloud
 ## ☁️ Deploying to Vercel
 
 1. Push the repo: `git push origin main`
-2. `vercel link` → select the project (create if needed) → `vercel deploy --prod`
-3. Configure **environment secrets** (click **Settings → Environment Variables**):
-   - `GROQ` — Groq API key
-   - `GEMINI` — Gemini API key
-   - `EMBEDDING` — Gemini embedding model name (default `models/gemini-embedding-001`)
-   - `RERANK` — rerank provider (default `groq_llm_fallback`)
-   - `QDRANT_URL` — Qdrant Cloud cluster endpoint
-   - `QDRANT_API_KEY` — Qdrant Cloud API key
-4. Done — `/api/*` routes hit the FastAPI function.
+2. `vercel link` -> select the project (create if needed) -> `vercel deploy --prod`
+3. Configure **environment secrets** (Vercel Dashboard -> Settings -> Environment Variables):
+   - `GROQ` - Groq API key
+   - `GEMINI` - Gemini API key
+   - `EMBEDDING` - Gemini embedding model name (default `models/gemini-embedding-001`)
+   - `RERANK` - rerank provider (default `groq_llm_fallback`)
+   - `QDRANT_URL` - Qdrant Cloud cluster endpoint
+   - `QDRANT_API_KEY` - Qdrant Cloud API key
+4. Done - `/api/*` routes hit the FastAPI function.
 
 > **Note on Vercel serverless**: the Python compute has no persistent disk. The vector index therefore uses Qdrant Cloud; the `/tmp`-based ephemeral store is only a fallback for when no credentials are configured.
 
@@ -106,7 +108,7 @@ backend/                 # FastAPI app
   ingest_run.py          # Interactive local CSV ingest (prod-safe versions)
 frontend/                # React + Vite app
   src/
-    api.js               # API client (proxy: /api → FastAPI)
+    api.js               # API client (proxy: /api -> FastAPI)
     App.jsx              # App shell: sources, preferences, chat
     components/          # Sidebar, ResultCard, UploadPanel, ...
     lib/                 # markdown rendering helpers
@@ -133,3 +135,4 @@ data/                    # QA artefact CSVs (test suites)
 Latest commit `1fbee7a` contains the full app + Vercel config. The `Advance-Playwright-Framework/` folder is a **separate nested git repo** and is excluded by `.gitignore` rules in the outer repo.
 
 `git clone https://github.com/poornimahebbar/qabuddy-rag.git && cd qabuddy-rag && code .`
+
