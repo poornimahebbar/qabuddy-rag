@@ -1,4 +1,7 @@
+import { useEffect, useState } from 'react'
 import UploadPanel from './UploadPanel.jsx'
+import FrameworkPanel from './FrameworkPanel.jsx'
+import { getFrameworkCheck } from '../api.js'
 
 const TYPE_LABELS = {
   jira_defect: 'Jira Defect',
@@ -12,6 +15,28 @@ export default function Sidebar({ health, sources, ingesting, onIngest, onReinde
   const total = sources?.indexed_points_count ?? 0
   const byType = sources?.by_type || {}
   const status = sources?.status || 'loading'
+  const [check, setCheck] = useState(null)
+
+  useEffect(() => {
+    let cancelled = false
+    getFrameworkCheck()
+      .then((d) => { if (!cancelled) setCheck(d) })
+      .catch(() => { if (!cancelled) setCheck(null) })
+    return () => { cancelled = true }
+  }, [total])
+
+  const local = check?.local || {}
+  const db = check?.database || {}
+  const indexed = db.indexed ?? total
+  const localTotal =
+    (local.playwright_specs || 0) +
+    (local.playwright_pages || 0) +
+    (local.playwright_modules || 0) +
+    (local.uploaded_test_cases || 0) +
+    (local.uploaded_defects || 0)
+  const denom = Math.max(localTotal * 3, indexed, 1)
+  const progress = Math.min(100, Math.round((indexed / denom) * 100))
+  const byTypeDb = db.by_type || {}
 
   return (
     <aside className="sidebar">
@@ -31,13 +56,52 @@ export default function Sidebar({ health, sources, ingesting, onIngest, onReinde
           ))}
         </ul>
         <div className={`status-pill ${status === 'synchronized' ? 'ok' : 'warn'}`}>
-          {status === 'synchronized' ? '● synchronized' : status === 'empty' ? '○ empty' : `○ ${status}`}
+          {status === 'synchronized' ? 'synchronized' : status === 'empty' ? 'empty' : `${status}`}
         </div>
+      </div>
+
+      <div className="side-block">
+        <div className="side-title">Test Frameworks (git pull)</div>
+        <FrameworkPanel onIndexed={onUploadSuccess} />
       </div>
 
       <div className="side-block">
         <div className="side-title">Upload Management</div>
         <UploadPanel onUploaded={onUploadSuccess} />
+      </div>
+
+      <div className="side-block">
+        <div className="side-title">Already Indexed?</div>
+        <div className="already-index-panel">
+          <div className="already-index-head">
+            <div>
+              <span className="already-index-label">On disk</span>
+              <div className="already-index-count">
+                {local.playwright_specs ?? '-'} specs / {local.playwright_pages ?? '-'} pages / {local.playwright_modules ?? '-'} modules
+                <br />
+                {local.uploaded_test_cases ?? '-'} test-case files / {local.uploaded_defects ?? '-'} defect files
+              </div>
+            </div>
+            <div>
+              <span className="already-index-label">In vector DB</span>
+              <div className="already-index-count">
+                Total: {indexed}
+                <br />
+                <span className="muted">{byTypeDb.jira_defect || 0} defects / {byTypeDb.test_case || 0} test cases</span>
+              </div>
+            </div>
+          </div>
+          <div className="already-index-bar">
+            <div className="already-index-fill" style={{ width: `${progress}%` }} />
+          </div>
+          <div className="already-index-meta">
+            {indexed > 0 ? (
+              <>Indexed {indexed} chunks ({progress}%) — search above to check for existing tests/methods.</>
+            ) : (
+              <span className="muted">Nothing indexed yet — pull a framework or upload CSVs.</span>
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="side-block">
@@ -70,8 +134,8 @@ export default function Sidebar({ health, sources, ingesting, onIngest, onReinde
         </div>
       </div>
 
-      <div className="side-block side-footer muted">
-        QABuddy.ai v2.0 — FastAPI · Qdrant · Gemini · Cohere/Groq
+      <div className="side-footer muted">
+        QABuddy.ai v2.0 — FastAPI + Qdrant + Gemini + Cohere/Groq
       </div>
     </aside>
   )

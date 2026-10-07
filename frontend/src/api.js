@@ -19,6 +19,13 @@ async function request(path, options = {}) {
 
 export const getHealth = () => request('/api/health')
 export const getSources = () => request('/api/sources')
+export const getFrameworkCheck = () => request('/api/framework-check')
+export const getFrameworks = () => request('/api/frameworks')
+export const pullFramework = (repo_url, branch) =>
+  request('/api/frameworks/pull', {
+    method: 'POST',
+    body: JSON.stringify(branch ? { repo_url, branch } : { repo_url }),
+  })
 export const ingest = () => request('/api/ingest', { method: 'POST' })
 export const reindex = () => request('/api/reindex', { method: 'POST' })
 export const search = (payload) =>

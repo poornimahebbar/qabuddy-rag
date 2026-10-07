@@ -274,6 +274,39 @@ body {
   vertical-align: -3px;
 }
 
+/* ---------- Framework pull panel ---------- */
+.fw-panel { display: flex; flex-direction: column; gap: 8px; }
+.fw-input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  font-size: 12px;
+  font-family: var(--mono);
+  padding: 9px 10px;
+  outline: none;
+}
+.fw-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(79, 140, 255, 0.25); }
+.fw-input::placeholder { color: var(--muted); }
+.fw-row { display: flex; gap: 8px; margin-top: 8px; }
+.fw-branch { flex: 1; min-width: 0; }
+.fw-btn { white-space: nowrap; }
+.fw-list { list-style: none; padding: 0; margin: 4px 0 0; display: flex; flex-direction: column; gap: 5px; }
+.fw-list li { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; }
+.fw-name { font-family: var(--mono); color: var(--text); overflow: hidden; text-overflow: ellipsis; }
+.fw-hint { font-size: 11px; line-height: 1.5; }
+
+/* ---------- Already Indexed panel ---------- */
+.already-index-panel { display: flex; flex-direction: column; gap: 10px; }
+.already-index-head { display: flex; gap: 14px; }
+.already-index-head > div { flex: 1; min-width: 0; }
+.already-index-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); font-weight: 600; }
+.already-index-count { font-size: 12px; margin-top: 4px; line-height: 1.6; }
+.already-index-bar { height: 6px; background: var(--bg); border: 1px solid var(--border); border-radius: 999px; overflow: hidden; }
+.already-index-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 999px; transition: width 0.5s; }
+.already-index-meta { font-size: 12px; line-height: 1.5; }
+
 /* ---------- Responsive ---------- */
 @media (max-width: 940px) {
   .app { flex-direction: column; }

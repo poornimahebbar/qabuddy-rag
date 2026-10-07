@@ -10,7 +10,8 @@ from pydantic import BaseModel, Field
 
 from .config import settings
 from .embeddings import embed_texts
-from .parsers import collect_all_chunks, parse_uploaded_csv
+from .frameworks import clone_or_pull, list_frameworks
+from .parsers import collect_all_chunks, file_index_status, parse_framework_dir, parse_uploaded_csv
 from .search import run_search
 from .vector_store import collection_counts, delete_by_source, scroll_chunks, upsert_chunks, wipe_collection
 
@@ -108,6 +109,88 @@ async def reindex():
         raise HTTPException(status_code=400, detail=_PROD_BLOCKED_MSG)
     wipe_collection()
     return await trigger_workspace_ingestion()
+
+
+
+@router.get("/framework-check")
+async def check_workspace_sources() -> dict:
+    """Report what already exists on disk and in the vector DB.
+
+    Used by the UI so a user can see, before ingesting, which test cases or
+    defect rows are already indexed (and whether they match a file they are
+    about to upload).
+    """
+    return file_index_status()
+
+
+class FrameworkPullPayload(BaseModel):
+    repo_url: str = Field(..., description="https:// git URL of the test-automation framework")
+    branch: str | None = Field(default=None, description="Optional branch to clone/pull")
+
+
+@router.get("/frameworks")
+async def list_indexed_frameworks() -> dict:
+    """Frameworks on disk (cloned via /api/frameworks/pull) with HEAD commits."""
+    return {"frameworks": list_frameworks()}
+
+
+@router.post("/frameworks/pull")
+async def pull_framework(payload: FrameworkPullPayload):
+    """Clone (first time) or pull (later) a framework repo, then index it into Qdrant.
+
+    Body: {"repo_url": "https://github.com/org/framework.git", "branch": "main" (optional)}.
+
+    Each spec test() becomes a `playwright_spec` chunk; page objects / modules
+    become `playwright_page` / `playwright_module` chunks — all namespaced as
+    `frameworks/<name>/...` so re-pulls overwrite the same points and anyone can
+    search "is login already automated?" style questions. CSV test-case and defect
+    zones are untouched.
+    """
+    if IS_VERCEL:
+        raise HTTPException(
+            status_code=400,
+            detail="Framework pull needs a writable git checkout — run it locally. "
+            "Production search still covers whatever was seeded into Qdrant Cloud.",
+        )
+    try:
+        info = await asyncio.to_thread(
+            clone_or_pull, payload.repo_url, payload.branch or ""
+        )
+    except (ValueError, RuntimeError) as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    async with _ingest_lock:
+        try:
+            chunks = await asyncio.to_thread(
+                parse_framework_dir, info["framework_dir"], info["framework_name"]
+            )
+            if not chunks:
+                return {
+                    "status": "success",
+                    "framework": info["framework_name"],
+                    "commit": info["commit"],
+                    "fresh_clone": info["fresh_clone"],
+                    "records_indexed": 0,
+                    "note": "Cloned OK but no .spec.ts / page-object .ts files found.",
+                }
+            vectors = await embed_texts([c["text"] for c in chunks])
+            indexed = upsert_chunks(chunks, vectors)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Framework indexing failed: {e}")
+
+    by_type: dict[str, int] = {}
+    for c in chunks:
+        by_type[c["doc_type"]] = by_type.get(c["doc_type"], 0) + 1
+    return {
+        "status": "success",
+        "message": "Framework pulled and indexed.",
+        "framework": info["framework_name"],
+        "commit": info["commit"],
+        "fresh_clone": info["fresh_clone"],
+        "records_indexed": indexed,
+        "by_type": by_type,
+        "sources": collection_counts(),
+    }
 
 
 @router.post("/upload")

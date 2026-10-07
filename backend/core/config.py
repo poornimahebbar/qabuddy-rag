@@ -50,6 +50,8 @@ class Settings:
     PLAYWRIGHT_TESTS_DIR: Path = WORKSPACE_DIR / "Advance-Playwright-Framework" / "src" / "tests"
     PLAYWRIGHT_PAGES_DIR: Path = WORKSPACE_DIR / "Advance-Playwright-Framework" / "src" / "pages"
     PLAYWRIGHT_MODULES_DIR: Path = WORKSPACE_DIR / "Advance-Playwright-Framework" / "src" / "modules"
+    # Cloned test-automation frameworks pulled via the UI (git clone/pull -> index).
+    FRAMEWORKS_DIR: Path = Path("/tmp/qabuddy/frameworks") if IS_VERCEL else DATA_DIR / "frameworks"
     CACHE_DB: Path = STORAGE_DIR / "cache.sqlite3"
 
     ALLOWED_ORIGINS: list[str] = ["*"]
